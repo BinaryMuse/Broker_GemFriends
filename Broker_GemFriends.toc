@@ -1,0 +1,17 @@
+## Interface: 30300
+## Title: Broker: GemFriends
+## Notes: A LDB friend list viewer
+## Author: Gemski
+## Version: 1.3
+## X-email: xabbott@zzt.org
+
+
+
+
+lib\AceLibrary\AceLibrary.lua
+lib\Tablet-2.0\Tablet-2.0.lua
+lib\LibStub\LibStub.lua
+lib\CallbackHandler-1.0\CallbackHandler-1.0.lua
+lib\LibDataBroker-1.1\LibDataBroker-1.1.lua
+
+Broker_GemFriends.lua
