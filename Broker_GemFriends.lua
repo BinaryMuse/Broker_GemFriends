@@ -50,8 +50,9 @@ local function update_Broker()
 	local online = 0
 
 	local NumFriends = GetNumFriends()
+	local bnet_friends, bnet_onlineFriends = BNGetNumFriends()
 	for i = 1,NumFriends do if select(5, GetFriendInfo(i)) then online = online + 1 end end
-	local friendlies = NumFriends > 0 and string.format("%d/%d", online, NumFriends) or ""
+	local friendlies = string.format("%d/%d - %d/%d", online, NumFriends, bnet_onlineFriends, bnet_friends) or ""
 
 
 	dataobj.text = friendlies
@@ -91,7 +92,7 @@ function dataobj:updateTooltip()
 	--  Begin friends list  --
 	--------------------------
 
-	local cat = tablet:AddCategory('id', 'friends', 'columns', 4, 'text', "")
+	local cat = tablet:AddCategory('id', 'friends', 'columns', 5, 'text', "")
 	cat:AddLine(
 		'text', "NAME",
 		'text2', "LEVEL",
@@ -123,6 +124,50 @@ function dataobj:updateTooltip()
 	if GetNumFriends() == 0 then cat:AddLine('text',"No friends.")
 	elseif not online then cat:AddLine('text',"No Friends Online") end
 
+	cat:AddLine('text', ' ')
+
+	cat:AddLine(
+		'text', "NAME",
+		'text2', "GAME",
+		'text3', "CHARACTER",
+		'text4', "LOCATION",
+		'text5', "BROADCAST"
+	)
+
+  local bnet_numFriends, bnet_onlineFriends = BNGetNumFriends()
+	for i = 1, bnet_numFriends, 1 do
+        presence, givenName, surname, toonName, toonId, client, online, lastOnline, isAFK, isDND, broadcastText, noteText = BNGetFriendInfo(i)
+        if online then
+            hasFocus, toonName, client, realm, faction, race, class, guild, zoneName, level, gameText = BNGetToonInfo(toonId)
+            if client == "WoW" then
+                toonName = toonName .. " (" .. "|cff"..levelcolor(level)..level.."|r" .. " " .. race .. " " .. string.format("|cff%s%s",colors[class:gsub(" ", ""):upper()] or "ffffff", class) .. ")"
+            end
+            status = ""
+            if isAFK then
+                status = "<AFK> "
+            end
+            if isDND then
+                status = "<DND> "
+            end
+            --playersOnline = playersOnline + 1
+            --playersShown = playersShown + 1
+            --table_insert(players, getplayertable(givenName .. surname, -1, toonName or UNKNOWN, UNKNOWN, UNKNOWN, status, broadcastText)
+            cat:AddLine(
+                'func', click,
+                'arg1', givenName.." "..surname,
+                'hasCheck',
+                true,
+                'checked',
+                false,
+                'checkIcon',"Interface\Buttons\UI-CheckBox-Check",
+                'text', status..givenName.." "..surname,
+                'text2', client,
+                'text3', toonName or "???",
+                'text4', gameText,
+                'text5', broadcastText
+            )
+        end
+	end
 
 
 
